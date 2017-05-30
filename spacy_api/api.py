@@ -37,6 +37,16 @@ def convert_attr(attributes):
     return attributes
 
 
+def vectors_length(model="en", embeddings_path=None):
+    nlp_ = get_nlp(model, embeddings_path)
+    return nlp_.vocab.vectors_length
+
+
+def description(model="en", embeddings_path=None):
+    nlp_ = get_nlp(model, embeddings_path)
+    return "{}_{}_{}".format(nlp_.meta['lang'], nlp_.meta['name'], nlp_.meta['version'])
+
+
 @cachetools.func.lru_cache(maxsize=3000000)
 def single(document, model="en", embeddings_path=None, attributes=None, local=False):
     attributes = convert_attr(attributes)

@@ -115,6 +115,12 @@ class BaseClient():
     def bulk(self, documents, attributes):
         raise NotImplementedError
 
+    def vectors_length(self):
+        raise NotImplementedError
+
+    def description(self):
+        raise NotImplementedError
+
 
 class Client(BaseClient):
 
@@ -127,6 +133,13 @@ class Client(BaseClient):
 
     def _call(self, path, *args):
         return self.rpc.call(path, *args)
+
+    def vectors_length(self):
+        length = self._call("vectors_length", self.model, self.embeddings_path)
+        return int(length)
+
+    def description(self):
+        return self._call("description", self.model, self.embeddings_path)
 
     @cachetools.func.lru_cache(maxsize=3000000)
     def single(self, document, attributes=None):
