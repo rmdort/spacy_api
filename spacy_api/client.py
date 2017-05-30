@@ -13,6 +13,7 @@ class SpacyClientToken():
             setattr(self, k, v)
         if "vector" in self.attributes:
             self.vector = np.array(self.vector)
+            self.vector_norm = np.sqrt(self.vector.dot(self.vector))
 
     def __repr__(self):
         if "text" in self.attributes:
@@ -20,13 +21,19 @@ class SpacyClientToken():
         else:
             return self.lemma_
 
+    def similarity(self, other):
+        if self.vector_norm == 0 or other.vector_norm == 0:
+            return 0.0
+        return np.dot(self.vector, other.vector) / (self.vector_norm * other.vector_norm)
+
 
 class SpacyClientSentence(list):
 
     def __init__(self, tokens):
         self.tokens = [SpacyClientToken(**token) for token in tokens]
-        super(SpacyClientSentence, self).__init__(self.tokens)
         self._vector = None
+        self._vector_norm = None
+        super(SpacyClientSentence, self).__init__(self.tokens)
 
     @property
     def vector(self):
@@ -35,11 +42,22 @@ class SpacyClientSentence(list):
         return self._vector
 
     @property
+    def vector_norm(self):
+        if self._vector_norm is None:
+            self._vector_norm = np.sqrt(np.dot(self.vector, self.vector))
+        return self._vector_norm
+
+    @property
     def string(self):
         return "".join([x.string for x in self.tokens])
 
     def __getitem__(self, i):
         return self.tokens[0]
+
+    def similarity(self, other):
+        if self.vector_norm == 0 or other.vector_norm == 0:
+            return 0.0
+        return np.dot(self.vector, other.vector) / (self.vector_norm * other.vector_norm)
 
 
 class SpacyClientDocument(list):
@@ -49,12 +67,19 @@ class SpacyClientDocument(list):
         self._iter = []
         super(SpacyClientDocument, self).__init__(self.sents)
         self._vector = None
+        self._vector_norm = None
 
     @property
     def vector(self):
         if self._vector is None:
             self._vector = np.mean([x.vector for x in self.sents], axis=0)
         return self._vector
+
+    @property
+    def vector_norm(self):
+        if self._vector_norm is None:
+            self._vector_norm = np.sqrt(np.dot(self.vector, self.vector))
+        return self._vector_norm
 
     @property
     def string(self):
@@ -71,6 +96,11 @@ class SpacyClientDocument(list):
         for sentence in self.sents:
             for token in sentence:
                 yield token
+
+    def similarity(self, other):
+        if self.vector_norm == 0 or other.vector_norm == 0:
+            return 0.0
+        return np.dot(self.vector, other.vector) / (self.vector_norm * other.vector_norm)
 
 
 class BaseClient():
