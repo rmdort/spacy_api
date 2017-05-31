@@ -71,7 +71,7 @@ class SpacyClientDocument(list):
 
     @property
     def vector(self):
-        if self._vector is None:
+        if self._vector is None and len(self.sents) > 0:
             self._vector = np.mean([x.vector for x in self.sents], axis=0)
         return self._vector
 
@@ -80,6 +80,10 @@ class SpacyClientDocument(list):
         if self._vector_norm is None:
             self._vector_norm = np.sqrt(np.dot(self.vector, self.vector))
         return self._vector_norm
+
+    @property
+    def has_vector(self):
+        return self.vector is not None
 
     @property
     def string(self):
