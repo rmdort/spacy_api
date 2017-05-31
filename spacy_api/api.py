@@ -4,6 +4,7 @@ import spacy
 nlp_objects = {}
 
 DEFAULT_ATTRIBUTES = ("text", "lemma_", "pos_", "tag_", "vector")
+SERVER_CACHE_SIZE = 100
 
 
 def get_nlp(model="en", embeddings_path=None):
@@ -26,7 +27,7 @@ def json_safety(token, x):
         return value
     else:
         # vectors
-        return [float(x) for x in value]
+        return [float(e) for e in value]
 
 
 def convert_attr(attributes):
@@ -47,7 +48,7 @@ def description(model="en", embeddings_path=None):
     return "{}_{}_{}".format(nlp_.meta['lang'], nlp_.meta['name'], nlp_.meta['version'])
 
 
-@cachetools.func.lru_cache(maxsize=3000000)
+@cachetools.func.lru_cache(maxsize=SERVER_CACHE_SIZE)
 def single(document, model="en", embeddings_path=None, attributes=None, local=False):
     attributes = convert_attr(attributes)
     nlp_ = get_nlp(model, embeddings_path)

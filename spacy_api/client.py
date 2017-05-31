@@ -4,6 +4,9 @@ import math
 import numpy as np
 from mprpc import RPCClient
 
+# Globals
+CLIENT_CACHE_SIZE = 5000
+
 
 class SpacyClientToken():
 
@@ -145,7 +148,7 @@ class Client(BaseClient):
     def description(self):
         return self._call("description", self.model, self.embeddings_path)
 
-    @cachetools.func.lru_cache(maxsize=3000000)
+    @cachetools.func.lru_cache(maxsize=CLIENT_CACHE_SIZE)
     def single(self, document, attributes=None):
         sentences = self._call("single", document, self.model, self.embeddings_path, attributes)
         return SpacyClientDocument(sentences)
