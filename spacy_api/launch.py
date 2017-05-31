@@ -14,7 +14,8 @@ from spacy_api import client, server
 # CH.setLevel(logging.DEBUG)
 # CH.setFormatter(FORMATTER)
 # LOG.addHandler(CH)
-LOG = logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)s - %(name)-8s - %(levelname)-8s:  %(message)s')
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)s - %(name)-8s - %(levelname)-8s: %(message)s')
+LOG = logging.getLogger(__name__)
 
 
 def from_cfg(cfg_fnm):
@@ -23,8 +24,8 @@ def from_cfg(cfg_fnm):
     with open(cfg_fnm, 'r') as ymlfile:
         cfg = yaml.load(ymlfile)
 
-    active_langs = [l.strip() for l in cfg.serve_langs.split(',')]
-    langs = [l for l in cfg.servers if l.id in active_langs]
+    active_langs = [l.strip() for l in cfg['serve_langs'].split(',')]
+    langs = [cfg['servers'][lang] for lang in active_langs]
 
     # Start each language server in separate process. These will stay alive indefinitely
     server_procs = []
@@ -32,8 +33,8 @@ def from_cfg(cfg_fnm):
         proc = os.fork()
         if proc == 0:
             # I'm a child process: start a server
-            LOG.info("Starting server for lang {}".format(lang.id))
-            server.serve(host=lang.host, port=lang.port)
+            LOG.info("Starting server for lang {}".format(lang['spacy_lang']))
+            server.serve(host=lang['host'], port=lang['port'])
         else:
             # I'm the parent: keep track of child processes
             server_procs.append(proc)
@@ -43,17 +44,20 @@ def from_cfg(cfg_fnm):
     time.sleep(2)
     load_procs = []
     for lang in langs:
+        host = lang['host']
+        port = lang['port']
+        spacy_lang = lang['spacy_lang']
         proc = os.fork()
         if proc == 0:
             try:
-                LOG.info("Initiating client for lang {}".format(lang.id))
-                if lang.wv_pretrained_fnm is not None:
-                    api_client = client.Client(host=lang.host, port=lang.port, model=lang.spacy_lang,
-                                               embeddings_path=lang.wv_pretrained_fnm, verbose=True)
+                LOG.info("Initiating client for lang {}".format(lang['spacy_lang']))
+                if lang['wv_pretrained_fnm'] is not None:
+                    api_client = client.Client(host=host, port=port, model=spacy_lang,
+                                               embeddings_path=lang['wv_pretrained_fnm'], verbose=True)
                 else:
-                    api_client = client.Client(host=lang.host, port=lang.port, model=lang.spacy_lang, verbose=True)
+                    api_client = client.Client(host=host, port=port, model=spacy_lang, verbose=True)
                 api_client.single('dummy')
-                LOG.info("{} server ready on {}:{}".format(lang.spacy_lang, lang.host, lang.port))
+                LOG.info("{} server ready on {}:{}".format(spacy_lang, host, port))
             except Exception as e:
                 LOG.error("Encountered exception. Cannot initialize server...")
                 LOG.exception(e)
@@ -73,4 +77,3 @@ def from_cfg(cfg_fnm):
     # Keep parent alive as long as any of the servers are alive. Needs to be explicitly killed.
     for proc in server_procs:
         os.waitpid(proc, 0)
-

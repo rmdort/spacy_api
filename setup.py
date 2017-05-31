@@ -13,7 +13,7 @@ setup(name='spacy_api',
       url='https://github.com/kootenpv/spacy_api',
       author_email='kootenpv@gmail.com',
       entry_points={
-          'console_scripts': ['spacy = spacy_api.__main__:main']
+          'console_scripts': ['spacy_serve = spacy_api.__main__:main']
       },
       install_requires=[
           'cachetools'

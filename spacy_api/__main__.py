@@ -1,5 +1,5 @@
 import sys
-from spacy_api.launch import from_config
+from spacy_api import launch
 
 
 def main():
@@ -8,4 +8,4 @@ def main():
         print("Need exactly 1 argument: the filename for the server config.")
         sys.exit()
 
-    from_config(sys.argv[1])
+    launch.from_cfg(sys.argv[1])
