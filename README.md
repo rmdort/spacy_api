@@ -30,7 +30,9 @@ Client Only (numpy, mprpc):
 
 Run the server:
 
-    spacy serve
+    spacy_serve config.yml
+
+where config.yml is a configuration file containing information about each language model to be served (see example server_config.yml in this repo).
 
 Then open a python process and run code in the next section.
 

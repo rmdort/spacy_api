@@ -1,4 +1,6 @@
+# Choose which languages to serve
 serve_langs: en, es
+# Details about each language model
 servers:
   en:
     spacy_lang: en_core_web_md
