@@ -39,7 +39,8 @@ setup(name='spacy_api',
       extras_require={
           'server': ['spacy', 'mprpc'],
           'client': ['mprpc', 'numpy'],
-          'all': ['mprpc', 'spacy', 'numpy']
+          'launch': ['yaml', 'pyyaml'],
+          'all': ['mprpc', 'spacy', 'numpy', 'yaml', 'pyyaml']
       },
       license='MIT',
       packages=find_packages(),
