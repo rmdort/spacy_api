@@ -14,9 +14,9 @@ pipeline:
     password: ${GCR_TOKEN}
     email: miguel@graphext.com
 
-  # deploy:
-  #   image: crispamares/kubectl:v1.6.2-build9
-  #   token: ${KUBE_TOKEN}
-  #   ca: ${KUBE_CA}
-  #   server: ${KUBE_SERVER}
-  #   cmd: kubectl apply -f kubernetes/deployment.yaml
+  deploy:
+    image: crispamares/kubectl:v1.6.2-build9
+    token: ${KUBE_TOKEN}
+    ca: ${KUBE_CA}
+    server: ${KUBE_SERVER}
+    cmd: kubectl apply -f kubernetes/deployment.yaml

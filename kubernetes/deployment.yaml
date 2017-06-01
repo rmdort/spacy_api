@@ -1,0 +1,122 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: spacy-api-config
+  labels:
+    app: spacy-api
+  namespace: default
+data:
+  server_config.yml: |-
+    # Choose which languages to serve
+    serve_langs: en, es
+    # Details about each language model
+    servers:
+      en:
+        spacy_lang: en_core_web_md
+        wv_pretrained_fnm:
+        host: 127.0.0.1
+        port: 9033
+      es:
+        spacy_lang: es_core_web_md
+        wv_pretrained_fnm:
+        host: 127.0.0.1
+        port: 9034
+      fr:
+        spacy_lang: fr_depvec_web_lg
+        wv_pretrained_fnm:
+        host: 127.0.0.1
+        port: 9035
+      de:
+        spacy_lang: de_core_news_md
+        wv_pretrained_fnm:
+        host: 127.0.0.1
+        port: 9036
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: spacy-api-en
+  labels:
+    app: spacy-api
+spec:
+  selector:
+    app: spacy-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9033
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: spacy-api-es
+  labels:
+    app: spacy-api
+spec:
+  selector:
+    app: spacy-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9034
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: spacy-api-fr
+  labels:
+    app: spacy-api
+spec:
+  selector:
+    app: spacy-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9035
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: spacy-api-de
+  labels:
+    app: spacy-api
+spec:
+  selector:
+    app: spacy-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9036
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: spacy-api
+  labels:
+    app: spacy-api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: spacy-api
+    spec:
+      volumes:
+      - name: server-conf
+        configMap:
+          name: spacy-api-config
+
+      containers:
+      - name: spacy-api
+        image: gcr.io/graphext-0/spacy-api:{{DRONE_COMMIT_SHA}}
+        command: [ "bash","-c","source activate spacy_api && spacy_serve server_config.yml" ]
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: "30m"
+            memory: "3500M"
+          initialDelaySeconds: 20
+          timeoutSeconds: 10
+        volumeMounts:
+        - name: server-conf
+          mountPath: /app/
