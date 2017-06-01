@@ -22,7 +22,7 @@ COPY . .
 RUN conda env create --file requirements.yml \
 	&& rm -rf /root/miniconda3/envs/spacy_api/lib/python3.6/site-packages/spacy/data \
 	&& ln -s /app/models /root/miniconda3/envs/spacy_api/lib/python3.6/site-packages/spacy/data \
-	&& source activate spacy_api && pip install -e . && source deactivate \
+	&& source activate spacy_api && python setup.py install && source deactivate \
 	&& conda clean --all
 
 EXPOSE 9033 9034 9035 9036

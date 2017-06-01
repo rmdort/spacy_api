@@ -109,7 +109,7 @@ spec:
       containers:
       - name: spacy-api
         image: gcr.io/graphext-0/spacy-api:{{DRONE_COMMIT_SHA}}
-        command: [ "bash","-c","source activate spacy_api && spacy_serve server_config.yml" ]
+        command: [ "bash","-c","source activate spacy_api && python spacy_api/__main__.py server_config.yml" ]
         imagePullPolicy: IfNotPresent
         resources:
           requests:
