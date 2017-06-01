@@ -115,8 +115,6 @@ spec:
           requests:
             cpu: "30m"
             memory: "3500M"
-          initialDelaySeconds: 20
-          timeoutSeconds: 10
         volumeMounts:
         - name: server-conf
           mountPath: /app/
