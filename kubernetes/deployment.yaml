@@ -24,22 +24,22 @@ data:
       en:
         spacy_lang: en_core_web_md
         wv_pretrained_fnm:
-        host: 127.0.0.1
+        host: 0.0.0.0
         port: 9033
       es:
         spacy_lang: es_core_web_md
         wv_pretrained_fnm:
-        host: 127.0.0.1
+        host: 0.0.0.0
         port: 9034
       fr:
         spacy_lang: fr_depvec_web_lg
         wv_pretrained_fnm:
-        host: 127.0.0.1
+        host: 0.0.0.0
         port: 9035
       de:
         spacy_lang: de_core_news_md
         wv_pretrained_fnm:
-        host: 127.0.0.1
+        host: 0.0.0.0
         port: 9036
 ---
 kind: Service
