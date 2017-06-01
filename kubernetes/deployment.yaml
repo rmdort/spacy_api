@@ -1,3 +1,13 @@
+# kind: Secret
+# apiVersion: v1
+# metadata:
+#   name: spacy-gc-credentials
+#   labels:
+#     app: spacy-api
+# type: Opaque
+# data:
+#   gc_credentials.json: ________
+---
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -88,14 +98,29 @@ spec:
       port: 80
       targetPort: 9036
 ---
-kind: Deployment
-apiVersion: extensions/v1beta1
+kind: StatefulSet
+apiVersion: apps/v1beta1
 metadata:
   name: spacy-api
   labels:
     app: spacy-api
 spec:
+  serviceName: spacy-api
   replicas: 1
+
+  volumeClaimTemplates:
+  - metadata:
+      name: models-volume
+      labels:
+        app: spacy-api
+      annotations:
+        volume.beta.kubernetes.io/storage-class: slow
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 50Gi
+
   template:
     metadata:
       labels:
@@ -105,6 +130,22 @@ spec:
       - name: server-conf
         configMap:
           name: spacy-api-config
+      - name: gc-credentials
+        secret:
+          secretName: spacy-gc-credentials
+
+      initContainers:
+      - name: models-download
+        image: google/cloud-sdk
+        command: ['bash', '-c', 'gcloud auth activate-service-account --key-file=/gc_credentials/gc_credentials.json && gsutil rsync -d -r gs://spacy-models/ /models']
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /gc_credentials/gc_credentials.json
+        volumeMounts:
+        - name: models-volume
+          mountPath: /models
+        - name: gc-credentials
+          mountPath: /gc_credentials
 
       containers:
       - name: spacy-api
@@ -117,4 +158,7 @@ spec:
             memory: "3500M"
         volumeMounts:
         - name: server-conf
-          mountPath: /app/
+          mountPath: /app/server_config.yml
+          subPath: server_config.yml
+        - name: models-volume
+          mountPath: /app/models
