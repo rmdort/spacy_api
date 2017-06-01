@@ -1,0 +1,22 @@
+branches: deploy
+
+pipeline:
+
+  publish:
+    image: plugins/docker
+    dockerfile: kubernetes/Dockerfile
+    registry: gcr.io
+    repo: gcr.io/graphext-0/spacy-api
+    tags:
+      - latest
+      - ${DRONE_COMMIT_SHA}
+    username: _json_key
+    password: ${GCR_TOKEN}
+    email: miguel@graphext.com
+
+  # deploy:
+  #   image: crispamares/kubectl:v1.6.2-build9
+  #   token: ${KUBE_TOKEN}
+  #   ca: ${KUBE_CA}
+  #   server: ${KUBE_SERVER}
+  #   cmd: kubectl apply -f kubernetes/deployment.yaml

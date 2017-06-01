@@ -1,0 +1,13 @@
+name: spacy_api
+channels:
+- defaults
+- anaconda
+- conda-forge
+dependencies:
+- pyyaml
+- yaml
+- numpy=1.12.1
+- spacy=1.8.2
+- pip:
+  - mprpc==0.1.14
+prefix: /tmp/envs/spacy_api
