@@ -81,7 +81,10 @@ class SpacyClientDocument(list):
     @property
     def vector_norm(self):
         if self._vector_norm is None:
-            self._vector_norm = np.sqrt(np.dot(self.vector, self.vector))
+            if self.vector is not None:
+                self._vector_norm = np.sqrt(np.dot(self.vector, self.vector))
+            else:
+                self._vector_norm = 0
         return self._vector_norm
 
     @property
