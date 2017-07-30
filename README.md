@@ -1,5 +1,7 @@
 ## spacy_api
 
+Based on https://github.com/kootenpv/spacy_api
+
 Helps with loading models in a separate, dedicated process.
 
 Caching happens on unique arguments.
