@@ -1,0 +1,19 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: spacy-deployment-en
+spec:
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: spacy
+        tier: backend
+        lang: en
+    spec:
+      containers:
+      - name: spacy
+        image: olasearch/spacy_api:latest
+        ports:
+        - name: spacy-en-port
+          containerPort: 9033

@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: spacy-service-en
+spec:
+  selector:
+    app: spacy
+    lang: en
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: spacy-en-port
