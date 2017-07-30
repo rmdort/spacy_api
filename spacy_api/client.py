@@ -17,6 +17,10 @@ class SpacyClientToken():
         if "vector" in self.attributes:
             self.vector = np.array(self.vector)
             self.vector_norm = np.sqrt(self.vector.dot(self.vector))
+            if self.vector_norm == 0:
+                self.has_vector = False
+            else:
+                self.has_vector = True
 
     def __repr__(self):
         if "text" in self.attributes:

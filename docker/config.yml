@@ -1,0 +1,9 @@
+# Choose which languages to serve
+serve_langs: en
+# Details about each language model
+servers:
+  en:
+    spacy_lang: en
+    wv_pretrained_fnm:
+    host: 0.0.0.0
+    port: 9033

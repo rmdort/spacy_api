@@ -83,7 +83,7 @@ To make a call:
 
 ```python
 # Tell spacy which attributes to give back, comma separated
-spacy_client.single("How are you", attributes="text,lemma_,pos,vector")
+spacy_client.single("How are you", attributes="text,lemma,pos,vector")
 ```
 
 Naturally, you can use any combination of these.
