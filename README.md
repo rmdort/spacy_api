@@ -6,6 +6,12 @@ Helps with loading models in a separate, dedicated process.
 
 Caching happens on unique arguments.
 
+### Run it as docker container
+
+````
+docker run -p 127.0.0.1:9033:9033 registry.gitlab.com/olasearch/docker-spacy-api:v1
+````
+
 #### Features
 
 - ✓ Serve models separately
