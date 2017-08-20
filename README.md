@@ -18,91 +18,36 @@ docker run -p 127.0.0.1:9033:9033 registry.gitlab.com/olasearch/docker-spacy-api
 - ✓ Client- and Server-side caching
 - ✓ CLI interface
 
-### Install
+### Install spacy_api python module
 
 Should work with py2 and py3.
 
-Install on a machine that will run both client and server:
+````
+pip install -e git+https://github.com/rmdort/spacy_api.git#egg=spacy_api
+````
 
-    pip install spacy_api[all]
-
-Server only (spacy, mprpc):
-
-    pip install spacy_api[server]
-
-Client Only (numpy, mprpc):
-
-    pip install spacy_api[client]
-
-### Example
-
-Run the server:
-
-    spacy_serve config.yml
-
-where config.yml is a configuration file containing information about each language model to be served (see example server_config.yml in this repo).
-
-Then open a python process and run code in the next section.
-
-#### Single document
-
-```python
+### Connecting to spacy
+````
 from spacy_api import Client
 
-spacy_client = Client() # default args host/port
+# If using kubernetes, spacy will be launched under `spacy-service-en` name
+# Get Spacy server information
+if os.environ.get('GET_HOSTS_FROM') == 'dns':
+  spacy_host = 'spacy-service-en'
+  spacy_port = 80
+elif os.environ.get('GET_HOSTS_FROM') == 'env':
+  spacy_host = os.environ['SPACY_SERVICE_EN_SERVICE_HOST']
+  spacy_port = int(os.environ['SPACY_SERVICE_EN_SERVICE_PORT'])
+else:
+  # If running as a docker container
+  spacy_host = '127.0.0.1'
+  spacy_port = 9033
 
-doc = spacy_client.single("How are you")
-doc
-# [[How, are, you]]
+spacy_client = Client(model="en", host=spacy_host, port=spacy_port)
+````
 
-# iterate over sentences
-for sentence in doc.sents:
-    for token in sentence:
-        print(token.text, token.pos_, token.lemma_)
+### Getting word vectors
 
-# iterate over a whole document
-for token in doc:
-    print(token)
-```
-
-#### Switch to running spacy within the process
-
-Instead of
-
-    from spacy_api import Client
-
-use
-
-    from spacy_api import LocalClient
-
-#### Arguments
-
-LocalClient/Client:
-
-```python
-# language/model
-spacy_client = Client(model="en")
-
-# Using google pretrained vectors
-spacy_client = Client(embeddings_path="en_google")
-```
-
-To make a call:
-
-```python
-# Tell spacy which attributes to give back, comma separated
-spacy_client.single("How are you", attributes="text,lemma,pos,vector")
-```
-
-Naturally, you can use any combination of these.
-
-#### Bulk of documents
-
-```python
-docs = spacy_client.bulk(["How are you"]*100)
-for doc in docs:
-    for sentence in doc.sents:
-        for token in sentence:
-            print(token.text, token.pos_, token.lemma_)
-
-```
+````
+doc = spacy_client.single(sentence, attributes="text,lemma_,pos,vector,has_vector")
+````
