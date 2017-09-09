@@ -1,3 +1,12 @@
+import re
+import sys
+import string
+
+if sys.version_info < (3,):
+  maketrans = string.maketrans
+else:
+  maketrans = str.maketrans
+
 def text_to_word_sequence(text,
                           filters='!"\,-()*+/:;<=>?[\\]^`\'|~\t\n',
                           lower=True, split=" ", raw=False):
