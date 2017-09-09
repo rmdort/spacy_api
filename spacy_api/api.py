@@ -1,18 +1,29 @@
 import cachetools.func
 import spacy
+from spacy_api.tokenizer import text_to_word_sequence
 
 nlp_objects = {}
 
 DEFAULT_ATTRIBUTES = ("text", "lemma_", "pos_", "tag_", "vector")
 SERVER_CACHE_SIZE = 100
 
+# Custom tokenizer to Spacy
+class Tokenizer(object):
+    def __init__(self, nlp):
+        self.vocab = nlp.vocab
+
+    def __call__(self, text):
+        words = text_to_word_sequence(text)
+        spaces = [True] * len(words)
+        return spacy.tokens.Doc(self.vocab, words=words, spaces=spaces)
+
 
 def get_nlp(model="en", embeddings_path=None):
     if embeddings_path not in nlp_objects:
         if embeddings_path is None:
-            nlp_ = spacy.load(model)
+            nlp_ = spacy.load(model, create_make_doc=Tokenizer)
         else:
-            nlp_ = spacy.load(model, vectors=embeddings_path)
+            nlp_ = spacy.load(model, vectors=embeddings_path, create_make_doc=Tokenizer)
         nlp_objects[embeddings_path] = nlp_
     return nlp_objects[embeddings_path]
 
