@@ -27,6 +27,17 @@ def get_nlp(model="en", embeddings_path=None):
         nlp_objects[embeddings_path] = nlp_
     return nlp_objects[embeddings_path]
 
+def isgenerator(iterable):
+    return hasattr(iterable,'__iter__') and not hasattr(iterable,'__len__')
+
+def recursive_iterate(enum):
+  value = []
+  for v in enum:
+    if (isgenerator(v)):
+      value.append(recursive_iterate(v))
+    else:
+      value.append(v)
+  return value
 
 def json_safety(token, x):
     try:
@@ -40,6 +51,8 @@ def json_safety(token, x):
         if x == 'vector':
           # vectors
           return [float(e) for e in value]
+        if (isgenerator(value)):
+          value = recursive_iterate(value)
         return value
 
 
