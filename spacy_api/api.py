@@ -34,7 +34,7 @@ def json_safety(token, x):
     except AttributeError:
         print(x, "not found on spacy object")
         value = "ERROR"
-    if isinstance(value, (str, int, bool, list, dict)):
+    if isinstance(value, (str, int, bool)):
         return value
     else:
         # vectors
