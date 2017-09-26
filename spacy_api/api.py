@@ -36,7 +36,7 @@ def recursive_iterate(enum):
     if (isgenerator(v)):
       value.append(recursive_iterate(v))
     else:
-      value.append(v)
+      value.append(str(v))
   return value
 
 def json_safety(token, x):
@@ -48,6 +48,8 @@ def json_safety(token, x):
     if isinstance(value, (str, int, bool)):
         return value
     else:
+        if x == 'head':
+          value = str(value)
         if x == 'vector':
           # vectors
           return [float(e) for e in value]
