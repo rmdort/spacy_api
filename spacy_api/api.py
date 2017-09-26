@@ -37,8 +37,10 @@ def json_safety(token, x):
     if isinstance(value, (str, int, bool)):
         return value
     else:
-        # vectors
-        return [float(e) for e in value]
+        if x == 'vector':
+          # vectors
+          return [float(e) for e in value]
+        return value
 
 
 def convert_attr(attributes):
