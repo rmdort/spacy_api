@@ -3,7 +3,12 @@ kind: Deployment
 metadata:
   name: spacy-deployment-en
 spec:
-  replicas: 2 # tells deployment to run 2 pods matching the template
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  replicas: 1 # tells deployment to run 2 pods matching the template
   template: # create pods using pod definition in this template
     metadata:
       labels:
@@ -13,7 +18,7 @@ spec:
     spec:
       containers:
       - name: spacy
-        image: olasearch/spacy_api:latest
+        image: olasearch/spacy_api:v2
         ports:
         - name: spacy-en-port
           containerPort: 9033
