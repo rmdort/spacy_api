@@ -23,5 +23,7 @@ COPY config.yml /app/
 RUN pip install mprpc
 RUN pip install pyyaml
 RUN python -m spacy download en
-RUN pip install -e git+https://github.com/rmdort/spacy_api.git@b8e66532a94e1aa45fcc3f4c88490c6604197366#egg=spacy_api
+RUN pip install -e git+https://github.com/rmdort/spacy_api.git@6ea709645d0bfcc9a76f554507411e8d85dc8fc1#egg=spacy_api
+RUN pip install nltk, numpy
+RUN python -m nltk.downloader 'punkt'
 CMD ["spacy_serve", "/app/config.yml"]

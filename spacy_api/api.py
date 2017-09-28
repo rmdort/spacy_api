@@ -1,6 +1,7 @@
 import cachetools.func
 import spacy
 from spacy_api.tokenizer import text_to_word_sequence
+from spacy_api.negation import is_neg
 
 nlp_objects = {}
 
@@ -90,6 +91,10 @@ def single(document, model="en", embeddings_path=None, attributes=None, local=Fa
             sentences.append(sentence)
     return sentences
 
+def negation(document, slotIndex, model="en", embeddings_path=None, local=False):
+    nlp_ = get_nlp(model, embeddings_path)
+    sentences = nlp_(document)
+    return is_neg(sentences, slotIndex)
 
 def bulk(documents, model="en", embeddings_path=None, attributes=None, local=False):
     attributes = convert_attr(attributes)

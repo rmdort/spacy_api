@@ -126,6 +126,9 @@ class BaseClient():
     def single(self, document, attributes):
         raise NotImplementedError
 
+    def negation(self, document, slotIndex):
+        raise NotImplementedError
+
     def bulk(self, documents, attributes):
         raise NotImplementedError
 
@@ -159,6 +162,11 @@ class Client(BaseClient):
     def single(self, document, attributes=None):
         sentences = self._call("single", document, self.model, self.embeddings_path, attributes)
         return SpacyClientDocument(sentences)
+
+    def negation(self, document, slotIndex):
+        sentences = self._call("negation", document, slotIndex, self.model, self.embeddings_path)
+        return sentences
+        # return SpacyClientDocument(sentences)
 
     def _bulk(self, documents, attributes):
         return self._call("bulk", documents, self.model, self.embeddings_path, attributes)
