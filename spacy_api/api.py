@@ -14,7 +14,8 @@ class Tokenizer(object):
         self.vocab = nlp.vocab
 
     def __call__(self, text):
-        words = text_to_word_sequence(text)
+        # words = text_to_word_sequence(text)
+        words = text.split()
         spaces = [True] * len(words)
         return spacy.tokens.Doc(self.vocab, words=words, spaces=spaces)
 
