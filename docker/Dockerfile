@@ -25,5 +25,5 @@ COPY config.yml /app/
 RUN pip install mprpc
 RUN pip install pyyaml
 RUN python -m spacy download en
-RUN pip install -e git+https://github.com/rmdort/spacy_api.git@2bd766efc13d1ad59ed7bddf4ef8f1f2dcbea1a7#egg=spacy_api
+RUN pip install -e git+https://github.com/rmdort/spacy_api.git@00abbe405d0550f6cc28a8a3646ee7b37f808ae3#egg=spacy_api
 CMD ["spacy_serve", "/app/config.yml"]

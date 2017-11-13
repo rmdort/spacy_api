@@ -18,14 +18,15 @@ def _parse_dependency_tree(doc):
       if 'V' in w.tag_ or True:
         neg = False
         for c in w.children:
+          if t2i[c] < t2i[orig_w]:
+            if c.text in semi_neg_words:
+              sn = True
           if c.text in neg_words:
             if not sn:
               negs.append(t2i[orig_w])
               neg = True
             break
-          elif t2i[c] < t2i[orig_w]:
-            if c.text in semi_neg_words:
-              sn = True
+
         if neg:
           break
       if w == w.head:

@@ -16,6 +16,7 @@ class Tokenizer(object):
     def __call__(self, text):
         # words = text_to_word_sequence(text)
         words = text.split()
+        print (words)
         spaces = [True] * len(words)
         return spacy.tokens.Doc(self.vocab, words=words, spaces=spaces)
 
@@ -23,9 +24,9 @@ class Tokenizer(object):
 def get_nlp(model="en", embeddings_path=None):
     if embeddings_path not in nlp_objects:
         if embeddings_path is None:
-            nlp_ = spacy.load(model, create_make_doc=Tokenizer)
+            nlp_ = spacy.load(model)
         else:
-            nlp_ = spacy.load(model, vectors=embeddings_path, create_make_doc=Tokenizer)
+            nlp_ = spacy.load(model, vectors=embeddings_path)
         nlp_objects[embeddings_path] = nlp_
     return nlp_objects[embeddings_path]
 
