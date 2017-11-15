@@ -3,7 +3,7 @@ serve_langs: en
 # Details about each language model
 servers:
   en:
-    spacy_lang: en
+    spacy_lang: en_core_web_md
     wv_pretrained_fnm:
     host: 0.0.0.0
     port: 9033
