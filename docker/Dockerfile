@@ -17,13 +17,13 @@ RUN chmod +x miniconda.sh \
   && conda update --yes conda
 
 RUN conda config --add channels conda-forge
-RUN conda install spacy
+RUN conda install spacy=1.9.0
 RUN conda install nltk
 RUN python -m nltk.downloader 'punkt'
 WORKDIR /app
 COPY config.yml /app/
 RUN pip install mprpc
 RUN pip install pyyaml
-RUN python -m spacy download en_core_web_md
+RUN python -m spacy download en
 RUN pip install -e git+https://github.com/rmdort/spacy_api.git@78f3c22b3b6e59758cf1a853e0fcd304d555e816#egg=spacy_api
 CMD ["spacy_serve", "/app/config.yml"]
