@@ -162,6 +162,10 @@ class Client(BaseClient):
     def single(self, document, attributes=None):
         sentences = self._call("single", document, self.model, self.embeddings_path, attributes)
         return SpacyClientDocument(sentences)
+    
+    def entity(self, document):
+        entities = self._call('entity', document, self.model, self.embeddings_path)
+        return entities
 
     def negation(self, document, slotIndex):
         sentences = self._call("negation", document, slotIndex, self.model, self.embeddings_path)

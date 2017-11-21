@@ -6,6 +6,7 @@ from spacy_api.negation import is_neg
 nlp_objects = {}
 
 DEFAULT_ATTRIBUTES = ("text", "lemma_", "pos_", "tag_", "vector")
+DEFAULT_ENTITY_ATTRIBUTES = ('start_char', 'label_', 'string', 'text', 'end_char')
 SERVER_CACHE_SIZE = 100
 
 # Custom tokenizer to Spacy
@@ -16,7 +17,6 @@ class Tokenizer(object):
     def __call__(self, text):
         # words = text_to_word_sequence(text)
         words = text.split()
-        print (words)
         spaces = [True] * len(words)
         return spacy.tokens.Doc(self.vocab, words=words, spaces=spaces)
 
@@ -82,7 +82,9 @@ def description(model="en", embeddings_path=None):
 @cachetools.func.lru_cache(maxsize=SERVER_CACHE_SIZE)
 def single(document, model="en", embeddings_path=None, attributes=None, local=False):
     attributes = convert_attr(attributes)
+    print('called top', model, embeddings_path)
     nlp_ = get_nlp(model, embeddings_path)
+    print('called bottom')
     if local:
         sentences = nlp_(document)
     else:
@@ -92,6 +94,17 @@ def single(document, model="en", embeddings_path=None, attributes=None, local=Fa
                         for token in sent]
             sentences.append(sentence)
     return sentences
+
+@cachetools.func.lru_cache(maxsize=SERVER_CACHE_SIZE)
+def entity(document, model="en", embeddings_path=None, local=False):
+    attributes = DEFAULT_ENTITY_ATTRIBUTES
+    nlp_ = get_nlp(model, embeddings_path)
+    ents = []
+    if local:
+        ents = nlp_(document).ents
+    else:
+        ents = [{x: json_safety(token, x) for x in attributes} for token in nlp_(document).ents]
+    return ents
 
 def negation(document, slotIndex, model="en", embeddings_path=None, local=False):
     nlp_ = get_nlp(model, embeddings_path)

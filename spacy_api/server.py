@@ -1,6 +1,6 @@
 from gevent.server import StreamServer
 from mprpc import RPCServer
-from spacy_api.api import single, negation, bulk, vectors_length, description
+from spacy_api.api import single, negation, entity, bulk, vectors_length, description
 from spacy_api.client import BaseClient
 
 
@@ -11,6 +11,9 @@ class SpacyServer(RPCServer):
 
     def negation(self, document, slotIndex, model, embeddings_path):
         return negation(document, slotIndex, model, embeddings_path)
+    
+    def entity(self, document, model, embeddings_path):
+        return entity(document, model, embeddings_path)
 
     def bulk(self, documents, model, embeddings_path, attributes):
         documents = tuple(documents)
@@ -33,6 +36,9 @@ class SpacyLocalServer(BaseClient):
 
     def negation(self, document, slotIndex):
         return negation(document, slotIndex, model, embeddings_path)
+    
+    def entity(self, document, model, embeddings_path):
+        return entity(document, model, embeddings_path)
 
     def bulk(self, documents, attributes=None):
         documents = tuple(documents)
